@@ -10,20 +10,20 @@ import {
 import Link from "next/link";
 import { useGameContext } from "@/app/context/GameProvider";
 
-/*-------------------------------------------------------------------*/
+/*-------------------------------------------------------------------*/ 
 
-type DialogProps = {
-  showSecondPlayerDialog: boolean;
-  setShowSecondPlayerDialog: React.Dispatch<React.SetStateAction<boolean>>;
-};
-
+type DialogProps =
+  {
+    showSecondPlayerDialog: boolean;
+    setShowSecondPlayerDialog: React.Dispatch<React.SetStateAction<boolean>>;
+  };
+  
 export default function SecondPlayerDialog({
   showSecondPlayerDialog,
   setShowSecondPlayerDialog,
 }: DialogProps) {
   const { pendingMode, playerNames, setPlayerNames, initializeGame } =
     useGameContext();
-
   return (
     <Dialog
       open={showSecondPlayerDialog}
@@ -31,23 +31,25 @@ export default function SecondPlayerDialog({
       fullWidth
       sx={{ mt: 28 }}
     >
-      <DialogTitle>Please enter the second player's name</DialogTitle>
+      {" "}
+      <DialogTitle>Please enter the second player's name</DialogTitle>{" "}
       <DialogContent>
+        {" "}
         <Grid container spacing={2} sx={{ mt: 1 }}>
+          {" "}
           <Grid sx={{ xs: 6 }}>
+            {" "}
             <TextField
               label="First name"
               fullWidth
               value={playerNames.p2First}
               onChange={(e) =>
-                setPlayerNames({
-                  ...playerNames,
-                  p2First: e.target.value,
-                })
+                setPlayerNames({ ...playerNames, p2First: e.target.value })
               }
-            />
-          </Grid>
+            />{" "}
+          </Grid>{" "}
           <Grid sx={{ xs: 6 }}>
+            {" "}
             <TextField
               label="Last name"
               fullWidth
@@ -55,13 +57,17 @@ export default function SecondPlayerDialog({
               onChange={(e) =>
                 setPlayerNames({ ...playerNames, p2Last: e.target.value })
               }
-            />
-          </Grid>
-        </Grid>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={() => setShowSecondPlayerDialog(false)}>Cancel</Button>
+            />{" "}
+          </Grid>{" "}
+        </Grid>{" "}
+      </DialogContent>{" "}
+      <DialogActions sx={{ mb: 2, mr: 2 }}>
+        {" "}
+        <Button onClick={() => setShowSecondPlayerDialog(false)}>
+          Cancel
+        </Button>{" "}
         <Link href="/game">
+          {" "}
           <Button
             variant="contained"
             onClick={() => {
@@ -70,10 +76,11 @@ export default function SecondPlayerDialog({
             }}
             disabled={!playerNames.p2First || !playerNames.p2Last}
           >
-            Start playing
-          </Button>
-        </Link>
-      </DialogActions>
+            {" "}
+            Start playing{" "}
+          </Button>{" "}
+        </Link>{" "}
+      </DialogActions>{" "}
     </Dialog>
   );
 }

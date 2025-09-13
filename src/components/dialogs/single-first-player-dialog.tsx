@@ -29,7 +29,6 @@ export default function SingleFirstPlayerDialog({
 }: DialogProps) {
   const { pendingMode, playerNames, setPlayerNames, initializeGame } =
     useGameContext();
-
   return (
     <Dialog
       open={showSinglePlayerDialog || showFirstPlayerDialog}
@@ -37,27 +36,30 @@ export default function SingleFirstPlayerDialog({
       fullWidth
       sx={{ mt: 28 }}
     >
+      {" "}
       <DialogTitle>
+        {" "}
         {showSinglePlayerDialog
           ? "Please enter your name"
-          : "Please enter the first player's name"}
-      </DialogTitle>
+          : "Please enter the first player's name"}{" "}
+      </DialogTitle>{" "}
       <DialogContent>
+        {" "}
         <Grid container spacing={2} sx={{ mt: 1 }}>
+          {" "}
           <Grid sx={{ xs: 6 }}>
+            {" "}
             <TextField
               label="First name"
               fullWidth
               value={playerNames.p1First}
               onChange={(e) =>
-                setPlayerNames({
-                  ...playerNames,
-                  p1First: e.target.value,
-                })
+                setPlayerNames({ ...playerNames, p1First: e.target.value })
               }
-            />
-          </Grid>
+            />{" "}
+          </Grid>{" "}
           <Grid sx={{ xs: 6 }}>
+            {" "}
             <TextField
               label="Last name"
               fullWidth
@@ -65,11 +67,12 @@ export default function SingleFirstPlayerDialog({
               onChange={(e) =>
                 setPlayerNames({ ...playerNames, p1Last: e.target.value })
               }
-            />
-          </Grid>
-        </Grid>
-      </DialogContent>
-      <DialogActions>
+            />{" "}
+          </Grid>{" "}
+        </Grid>{" "}
+      </DialogContent>{" "}
+      <DialogActions sx={{ mb: 2, mr: 2 }}>
+        {" "}
         <Button
           onClick={() =>
             showSinglePlayerDialog
@@ -77,9 +80,11 @@ export default function SingleFirstPlayerDialog({
               : setShowFirstPlayerDialog(false)
           }
         >
-          Cancel
-        </Button>
+          {" "}
+          Cancel{" "}
+        </Button>{" "}
         <Link href={showSinglePlayerDialog ? "/game" : "/"}>
+          {" "}
           <Button
             variant="contained"
             onClick={() => {
@@ -90,10 +95,11 @@ export default function SingleFirstPlayerDialog({
             }}
             disabled={!playerNames.p1First || !playerNames.p1Last}
           >
-            Next
-          </Button>
-        </Link>
-      </DialogActions>
+            {" "}
+            {showSinglePlayerDialog ? "Start playing" : "Next"}{" "}
+          </Button>{" "}
+        </Link>{" "}
+      </DialogActions>{" "}
     </Dialog>
   );
 }
