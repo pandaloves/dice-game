@@ -29,7 +29,7 @@ export default function GameOverDialog() {
       }}
     >
       <DialogTitle>
-        <EmojiEvents sx={{ fontSize: 48, color: "gold", }} />
+        <EmojiEvents sx={{ fontSize: 48, color: "gold" }} />
       </DialogTitle>
       <Typography variant="h4">Game over!</Typography>
       <DialogContent>
@@ -43,7 +43,7 @@ export default function GameOverDialog() {
             Final scores:
           </Typography>
           {gameState.players.map((player, index) => (
-            <Typography key={index} variant="body1" sx={{ mb: 1}}>
+            <Typography key={index} variant="body1" sx={{ mb: 1 }}>
               {player.name}: {player.score} points
             </Typography>
           ))}

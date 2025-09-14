@@ -140,20 +140,6 @@ export function GameProvider({ children }: { children: ReactNode }) {
     }
   }, [isRolling]);
 
-  useEffect(() => {
-    if (gameState.gameStatus !== "playing") return;
-    const interval = setInterval(async () => {
-      try {
-        const res = await fetch("http://localhost:8081/api/game/status");
-        const data = await res.json();
-        setGameState(data);
-      } catch (err) {
-        console.error("Failed to fetch game status:", err);
-      }
-    }, 2000);
-    return () => clearInterval(interval);
-  }, [gameState.gameStatus]);
-
   const resetGame = useCallback(async () => {
     try {
       await fetch("http://localhost:8081/api/game/reset", { method: "POST" });
@@ -207,8 +193,6 @@ export function GameProvider({ children }: { children: ReactNode }) {
         )}&player2Last=${encodeURIComponent(
           p2Last
         )}&gameMode=${encodeURIComponent(backendMode)}`;
-
-        console.log("Starting game with URL:", url);
 
         const startRes = await fetch(url, { method: "POST" });
         const startData = await startRes.json();
