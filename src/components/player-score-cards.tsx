@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Box,
   Card,
@@ -14,10 +16,11 @@ import { useGameContext } from "@/app/context/GameProvider";
 
 export default function PlayerScoreCards() {
   const { gameState } = useGameContext();
+  console.log(gameState);
 
   return (
     <Grid container spacing={3} sx={{ mb: 4 }}>
-      {gameState.players.map((player, index) => (
+      {gameState.players?.map((player, index) => (
         <Grid sx={{ xs: 12, md: 6 }} key={index}>
           <Card
             sx={{
@@ -48,7 +51,7 @@ export default function PlayerScoreCards() {
               <Box sx={{ display: "flex", alignItems: "start", gap: 2, mb: 1 }}>
                 <Typography variant="h4">Total score:</Typography>
                 <Typography variant="h4" color={"red"}>
-                  {player.totalScore}
+                  {player.score}
                 </Typography>
               </Box>
               <Box sx={{ mb: 2 }}>

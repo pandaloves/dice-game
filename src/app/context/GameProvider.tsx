@@ -10,7 +10,6 @@ import {
 } from "react";
 import { Box } from "@mui/material";
 import { GameState } from "../types/game";
-import { Player } from "../types/player";
 
 /*-------------------------------------------------------------------*/
 
@@ -48,7 +47,7 @@ type GameContextProps = {
   returnToSetup: () => void;
   exitGame: () => void;
   playAgain: () => void;
-  renderDice: () => React.ReactElement;
+  renderDice: () => React.ReactElement | null;
 };
 
 const GameContext = createContext<GameContextProps | null>(null);
@@ -77,94 +76,68 @@ export function GameProvider({ children }: { children: ReactNode }) {
   >(null);
 
   const initializeGame = useCallback(
-    (mode: "human-computer" | "human-human") => {
-      let players: Player[] = [];
+    async (mode: "human-computer" | "human-human") => {
+      const backendMode =
+        mode === "human-computer" ? "human vs computer" : "human vs human";
+      const p2First =
+        mode === "human-computer" ? "Computer" : playerNames.p2First;
+      const p2Last = mode === "human-computer" ? "" : playerNames.p2Last;
 
-      if (mode === "human-computer") {
-        players = [
-          {
-            name: `${playerNames.p1First} ${playerNames.p1Last}`,
-            scores: [],
-            totalScore: 0,
-            rollsLeft: 2,
-          },
-          { name: "Computer", scores: [], totalScore: 0, rollsLeft: 2 },
-        ];
-      } else {
-        players = [
-          {
-            name: `${playerNames.p1First} ${playerNames.p1Last}`,
-            scores: [],
-            totalScore: 0,
-            rollsLeft: 2,
-          },
-          {
-            name: `${playerNames.p2First} ${playerNames.p2Last}`,
-            scores: [],
-            totalScore: 0,
-            rollsLeft: 2,
-          },
-        ];
-      }
+      const res = await fetch(
+        `http://localhost:8081/api/game/start?` +
+          `player1First=${encodeURIComponent(playerNames.p1First)}&` +
+          `player1Last=${encodeURIComponent(playerNames.p1Last)}&` +
+          `player2First=${encodeURIComponent(p2First)}&` +
+          `player2Last=${encodeURIComponent(p2Last)}&` +
+          `gameMode=${encodeURIComponent(backendMode)}`,
+        { method: "POST" }
+      );
 
-      setGameState({
-        players,
-        currentPlayerIndex: 0,
-        gameMode: mode,
-        gameStatus: "playing",
-        winner: null,
-      });
+      const data = await res.json();
+      setGameState(data);
     },
     [playerNames]
   );
 
-  const rollDice = useCallback(() => {
+  const rollDice = useCallback(async () => {
     if (isRolling) return;
     setIsRolling(true);
 
-    setTimeout(() => {
-      const dice = Math.floor(Math.random() * 6) + 1;
-      setCurrentDiceValue(dice);
+    const res = await fetch("http://localhost:8081/api/game/roll", {
+      method: "POST",
+    });
+    const data = await res.json();
 
-      setGameState((prev) => {
-        const players = [...prev.players];
-        const current = { ...players[prev.currentPlayerIndex] };
-        current.scores.push(dice);
-        current.totalScore += dice;
-        current.rollsLeft -= 1;
-        players[prev.currentPlayerIndex] = current;
+    setGameState({
+      ...gameState,
+      ...data,
+    });
+    setCurrentDiceValue(data.roll || 1);
+    setIsRolling(false);
+  }, [isRolling, gameState]);
 
-        let nextIndex = prev.currentPlayerIndex;
-        if (current.rollsLeft === 0) {
-          nextIndex = (prev.currentPlayerIndex + 1) % players.length;
-          if (players[nextIndex].rollsLeft === 0) {
-            // do nothing, all rolls finished
-          } else {
-            players[nextIndex].rollsLeft = 2;
-          }
-        }
+  useEffect(() => {
+    if (gameState.gameStatus !== "playing") return;
 
-        const gameOver = players.every((p) => p.rollsLeft === 0);
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch("http://localhost:8081/api/game/status");
+        const data = await res.json();
+        setGameState(data);
+      } catch (err) {
+        console.error("Failed to fetch game status:", err);
+      }
+    }, 2000);
 
-        return {
-          ...prev,
-          players,
-          currentPlayerIndex: nextIndex,
-          gameStatus: gameOver ? "finished" : "playing",
-          winner: gameOver
-            ? players[0].totalScore === players[1].totalScore
-              ? "平局"
-              : players[0].totalScore > players[1].totalScore
-              ? players[0].name
-              : players[1].name
-            : null,
-        };
-      });
-      setIsRolling(false);
-    }, 500);
-  }, [isRolling]);
+    return () => clearInterval(interval);
+  }, [gameState.gameStatus]);
 
-  const returnToSetup = () => {
+  const resetGame = useCallback(async () => {
+    const res = await fetch("http://localhost:8081/api/game/reset", {
+      method: "POST",
+    });
+    const data = await res.json();
+
     setGameState({
       players: [],
       currentPlayerIndex: 0,
@@ -172,23 +145,51 @@ export function GameProvider({ children }: { children: ReactNode }) {
       gameStatus: "setup",
       winner: null,
     });
+
     setPlayerNames({ p1First: "", p1Last: "", p2First: "", p2Last: "" });
+    setShowGameOverDialog(false);
+    setShowExitConfirmDialog(false);
+  }, []);
+
+  const returnToSetup = () => {
+    resetGame();
     setShowGameOverDialog(false);
   };
 
   const exitGame = () => {
-    returnToSetup();
+    resetGame();
     setShowExitConfirmDialog(false);
   };
 
+  const resetScores = useCallback(() => {
+    setGameState((prev) => ({
+      ...prev,
+      players: prev.players.map((player) => ({
+        ...player,
+        scores: [],
+        score: 0,
+      })),
+      currentPlayerIndex: 0,
+      winner: null,
+      gameStatus: "setup", // go back to setup
+    }));
+
+    setCurrentDiceValue(1);
+    setShowGameOverDialog(false);
+  }, []);
+
   const playAgain = () => {
-    if (gameState.gameMode) {
-      initializeGame(gameState.gameMode);
-      setShowGameOverDialog(false);
-    }
+    resetScores(); // user must press Start again
   };
 
   const renderDice = () => {
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+
+    const lastRoll =
+      currentPlayer?.scores?.length > 0
+        ? currentPlayer.scores[currentPlayer.scores.length - 1]
+        : 1;
+
     const dots = [];
     const dotConfigurations = [
       [],
@@ -225,8 +226,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
       ],
     ];
 
-    for (let i = 0; i < dotConfigurations[currentDiceValue].length; i++) {
-      const position = dotConfigurations[currentDiceValue][i];
+    for (let i = 0; i < dotConfigurations[lastRoll].length; i++) {
+      const position = dotConfigurations[lastRoll][i];
       dots.push(
         <Box
           key={i}
@@ -244,6 +245,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       );
     }
 
+    // Always return a box, even if players aren't loaded yet
     return (
       <Box
         sx={{

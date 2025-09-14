@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Button,
   Grid,
@@ -10,14 +12,13 @@ import {
 import Link from "next/link";
 import { useGameContext } from "@/app/context/GameProvider";
 
-/*-------------------------------------------------------------------*/ 
+/*-------------------------------------------------------------------*/
 
-type DialogProps =
-  {
-    showSecondPlayerDialog: boolean;
-    setShowSecondPlayerDialog: React.Dispatch<React.SetStateAction<boolean>>;
-  };
-  
+type DialogProps = {
+  showSecondPlayerDialog: boolean;
+  setShowSecondPlayerDialog: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
 export default function SecondPlayerDialog({
   showSecondPlayerDialog,
   setShowSecondPlayerDialog,

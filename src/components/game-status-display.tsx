@@ -1,5 +1,7 @@
-import { useGameContext } from "@/app/context/GameProvider";
+"use client";
+
 import { Box, Typography, Grid, Chip, Paper } from "@mui/material";
+import { useGameContext } from "@/app/context/GameProvider";
 
 /*-------------------------------------------------------------------*/
 
