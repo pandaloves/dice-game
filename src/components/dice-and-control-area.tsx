@@ -1,3 +1,5 @@
+"use client";
+
 import { Box, Button, Card, Typography, Alert, Fade } from "@mui/material";
 import { Casino } from "@mui/icons-material";
 import { useGameContext } from "@/app/context/GameProvider";
@@ -20,22 +22,19 @@ export default function DiceAndControlArea() {
           </Alert>
         </Fade>
       )}
-      {gameState.gameStatus === "playing" &&
-        gameState.players[gameState.currentPlayerIndex]?.name !==
-          "Computer" && (
-          <Button
-            variant="contained"
-            size="large"
-            startIcon={<Casino />}
-            sx={{ minWidth: 150 }}
-            onClick={rollDice}
-            disabled={isRolling}
-          >
-            Roll
-          </Button>
-        )}
-      {gameState.gameStatus === "playing" &&
-        gameState.players[gameState.currentPlayerIndex]?.name === "Computer" &&
+      {gameState.players[gameState.currentPlayerIndex]?.name !== "Computer" && (
+        <Button
+          variant="contained"
+          size="large"
+          startIcon={<Casino />}
+          sx={{ minWidth: 150 }}
+          onClick={rollDice}
+          disabled={isRolling}
+        >
+          Roll
+        </Button>
+      )}
+      {gameState.players[gameState.currentPlayerIndex]?.name === "Computer" &&
         !isRolling && (
           <Typography variant="body1" color="text.secondary">
             Wait for the computer to roll...

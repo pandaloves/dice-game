@@ -1,3 +1,5 @@
+"use client";
+
 import { Box, Button, Typography } from "@mui/material";
 import { Home, ExitToApp } from "@mui/icons-material";
 import Link from "next/link";

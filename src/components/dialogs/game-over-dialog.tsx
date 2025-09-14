@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Box,
   Button,
@@ -14,8 +16,13 @@ import { useGameContext } from "@/app/context/GameProvider";
 /*-------------------------------------------------------------------*/
 
 export default function GameOverDialog() {
-  const { gameState, showGameOverDialog, returnToSetup, playAgain } =
-    useGameContext();
+  const {
+    gameState,
+    showGameOverDialog,
+    setShowGameOverDialog,
+    returnToSetup,
+    playAgain,
+  } = useGameContext();
 
   return (
     <Dialog
@@ -28,8 +35,8 @@ export default function GameOverDialog() {
     >
       <DialogTitle>
         <EmojiEvents sx={{ fontSize: 48, color: "gold", mb: 1 }} />
-        <Typography variant="h4">Game over!</Typography>
       </DialogTitle>
+      <Typography variant="h5">Game over!</Typography>
       <DialogContent>
         <Typography variant="h5" sx={{ mb: 2 }}>
           {gameState.winner === "Draw"
@@ -42,7 +49,7 @@ export default function GameOverDialog() {
           </Typography>
           {gameState.players.map((player, index) => (
             <Typography key={index} variant="body1" sx={{ mb: 1 }}>
-              {player.name}: {player.totalScore} 分
+              {player.name}: {player.score} 分
             </Typography>
           ))}
         </Box>
@@ -53,7 +60,10 @@ export default function GameOverDialog() {
             variant="contained"
             color="primary"
             startIcon={<PlayArrow />}
-            onClick={playAgain}
+            onClick={() => {
+              playAgain();
+              setShowGameOverDialog(false);
+            }}
           >
             Another Game
           </Button>
