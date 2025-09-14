@@ -27,7 +27,7 @@ export default function ChooseModeView() {
     return (
       <Container maxWidth="md">
         <Box sx={{ textAlign: "center", pt: 8, pb: 4 }}>
-          <Typography variant="h3" component="h1" gutterBottom color="primary">
+          <Typography variant="h5" gutterBottom color="primary">
             🎲 Dice Game
           </Typography>
           <Typography variant="h6" color="text.secondary" sx={{ mb: 4 }}>

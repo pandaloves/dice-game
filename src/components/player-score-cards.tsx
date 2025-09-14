@@ -16,7 +16,6 @@ import { useGameContext } from "@/app/context/GameProvider";
 
 export default function PlayerScoreCards() {
   const { gameState } = useGameContext();
-  console.log(gameState);
 
   return (
     <Grid container spacing={3} sx={{ mb: 4 }}>
@@ -41,7 +40,7 @@ export default function PlayerScoreCards() {
           >
             <CardContent>
               <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-                {player.name === "Computer" ? (
+                {player.name === "Computer " ? (
                   <Computer sx={{ mr: 1 }} />
                 ) : (
                   <Person sx={{ mr: 1 }} />
@@ -49,8 +48,8 @@ export default function PlayerScoreCards() {
                 <Typography variant="h6">{player.name}</Typography>
               </Box>
               <Box sx={{ display: "flex", alignItems: "start", gap: 2, mb: 1 }}>
-                <Typography variant="h4">Total score:</Typography>
-                <Typography variant="h4" color={"red"}>
+                <Typography variant="h5">Total score:</Typography>
+                <Typography variant="h6" color={"red"}>
                   {player.score}
                 </Typography>
               </Box>
