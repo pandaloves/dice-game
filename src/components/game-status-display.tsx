@@ -35,7 +35,7 @@ export default function GameStatusDisplay() {
             label={
               gameState.gameMode === "human-computer"
                 ? "Human vs Computer"
-                : "Two Players"
+                : "Human vs Human"
             }
             color="secondary"
           />
